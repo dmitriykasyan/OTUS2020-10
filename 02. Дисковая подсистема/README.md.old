@@ -1,0 +1,19 @@
+# Домашнее задание по теме LVM
+
+Домашнее задание выполнено на основании приложенной методички.  
+
+В процессе выполнения было пинято решение разделить работу на части:
+1. Уменьшить том под / до 8G  
+1. Выделить том под /home  
+1. Выделить том под /var -  сделать в mirror
+1. /home - сделать том для снапшотов, создать снапшот, изменить данные восстановится из снапшота.
+
+Для каждой из частей подготовлена схема и записан лог утилитой script.
+
+При решении четвертой части ДЗ возникла проблема с размонтированием /home. Проблема была решена получением рут прав из корневой директории.  
+
+Решения:  
+- Уменьшить том под / до 8G  - [Ход решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/pdf/part1.pdf) - [Лог решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/logs/part1.log)
+- Выделить том под /home  - [Ход решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/pdf/part2.pdf) - [Лог решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/logs/part2.log)
+- Выделить том под /var -  сделать в mirror - [Ход решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/pdf/part3.pdf) - [Лог решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/logs/part3.log)
+- /home - сделать том для снапшотов, создать снапшот, изменить данные восстановится из снапшота. - [Ход решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/pdf/part4.pdf) - [Лог решения](https://github.com/dmitriykasyan/lab4_fs_lvm/blob/master/logs/part4.log)

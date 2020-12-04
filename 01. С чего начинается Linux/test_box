@@ -1,0 +1,34 @@
+[dkasyan@MyX240 manual_kernel_update]$ vagrant box add --name kernel CentOS_7_5.9.2.box
+==> box: Box file was not detected as metadata. Adding it directly...
+==> box: Adding box 'kernel' (v0) for provider:
+    box: Unpacking necessary files from: file:///home/dkasyan/OTUS2020-10/01.%20%D0%A1%20%D1%87%D0%B5%D0%B3%D0%BE%20%D0%BD%D0%B0%D1%87%D0%B8%D0%BD%D0%B0%D0%B5%D1%82%D1%81%D1%8F%20Linux/manual_kernel_update/CentOS_7_5.9.2.box
+
+
+==> box: Successfully added box 'kernel' (v0) for 'virtualbox'!
+[dkasyan@MyX240 manual_kernel_update]$
+[dkasyan@MyX240 manual_kernel_update]$
+[dkasyan@MyX240 manual_kernel_update]$ vagrant box list
+centos/7 (virtualbox, 2004.01)
+kernel   (virtualbox, 0)
+[dkasyan@MyX240 manual_kernel_update]$ ls
+CentOS_7_5.9.2_big.box  CentOS_7_5.9.2.box  config-5.9.2  list_modules  manual  packer  Vagrantfile
+[dkasyan@MyX240 manual_kernel_update]$ mkdir test_box
+[dkasyan@MyX240 manual_kernel_update]$ cd test_box/
+[dkasyan@MyX240 test_box]$ vagrant init kernel
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+[dkasyan@MyX240 test_box]$ ls
+Vagrantfile
+[dkasyan@MyX240 test_box]$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'kernel'...
+Progress: 10%a2a2a2
+Progress: 20%
+...
+[dkasyan@MyX240 test_box]$ vagrant ssh
+Last login: Tue Nov 10 06:49:40 2020 from 10.0.2.2
+[vagrant@kernel-update ~]$ uname -r
+5.9.2
+[vagrant@kernel-update ~]$
