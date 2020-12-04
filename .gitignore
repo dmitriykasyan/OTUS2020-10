@@ -19,6 +19,7 @@
 08\.\ ZFS/otus-stand
 08\.\ ZFS/vdisks
 08\.\ ZFS/stand/.vagrant
+08\.\ ZFS/stand/*.vdi
 08\.\ ZFS/
 # 09\.\ grep\,\ sed\,\ awk\ и\ другие/
 # 10\.\ Инициализация\ системы\.\ Systemd/
