@@ -2,18 +2,10 @@
 # vim: set ft=ruby :
 
 MACHINES = {
-  :bash => {
+  :lab12 => {
         :box_name => "centos/7",
         :ip_addr => '192.168.11.101'
   }
-#  :mysql => {
-#        :box_name => "centos/7",
-#        :ip_addr => '192.168.11.102'
-#  },
-#  :nginx => {
-#        :box_name => "centos/7",
-#        :ip_addr => '192.168.11.103'
-#  }
 }
 
 Vagrant.configure("2") do |config|
@@ -32,14 +24,22 @@ Vagrant.configure("2") do |config|
           box.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "256"]
           end
-       box.vm.synced_folder "stands-05-bash/", "/home/vagrant/sync/"
+
+          config.vm.synced_folder ".", "/vagrant"
 
           box.vm.provision "shell", inline: <<-SHELL
-            mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
-            yum install vim -y
-          SHELL
+           mkdir -p ~root/.ssh
+           cp ~vagrant/.ssh/auth* ~root/.ssh
+           yum install epel-release -y -q
+# Install docker-ce
+           sudo yum install -y -q yum-utils \
+           device-mapper-persistent-data
+           sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+           yum install docker-ce docker-compose -y -q
+           systemctl start docker
+           docker run hello-world
+      SHELL
 
       end
   end
 end
-

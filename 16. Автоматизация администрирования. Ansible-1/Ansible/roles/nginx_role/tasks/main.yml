@@ -1,0 +1,28 @@
+---
+# tasks file for nginx_role
+- name: Install EPEL Repo packege from stndart repo
+  yum:
+    name: epel-release
+    state: present
+
+- name: NGINX | Install nginx package from epel repo
+  yum:
+    name: nginx
+    state: latest
+  notify:
+    - restart nginx
+  tags:
+    - nginx-package
+    - packages
+
+- name: NGINX | Create nginx config file from template
+  template:
+    src: nginx.conf.j2  # изменен путь к шаблонам
+    dest: /etc/nginx/nginx.conf           # изменена директория конф файла
+    owner: root   #
+    group: root   # Добавлен пользователь и права
+    mode: 0644    #
+  notify:
+    - reload nginx
+  tags:
+    - nginx-configuration

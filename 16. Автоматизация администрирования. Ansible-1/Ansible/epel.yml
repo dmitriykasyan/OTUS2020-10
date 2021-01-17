@@ -1,0 +1,9 @@
+---
+  - name: Install EPEL Repo
+    hosts: nginx
+    become: true
+    tasks:
+      - name: Install EPEL Repo packege from stndart repo
+        yum:
+          name: epel-release
+          state: present

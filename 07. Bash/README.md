@@ -1,67 +1,111 @@
 # Домашнее задание по теме: Bash, awk, sed
 
-добавим синхронизацию с папкой заданий на хостовой машине в Vagrant файл:  `config.vm.synced_folder "./stands-05-bash", "/home/vagrant/share", type: "rsync"
-`
-```
-[dkasyan@MyX240 lab5_bash_awk_sed]$ vagrant ssh bash
-[vagrant@bash ~]$ ls
-share
-[vagrant@bash ~]$ cd share/
-[vagrant@bash share]$ ll
-total 248
--rw-rw-r--. 1 vagrant vagrant   2891 Feb 18 19:23 README.md
--rw-rw-r--. 1 vagrant vagrant    996 Feb 18 19:23 Vagrantfile
--rw-rw-r--. 1 vagrant vagrant 165886 Feb 22 19:37 access-4560-644067.log
--rw-rw-r--. 1 vagrant vagrant    231 Feb 18 19:23 answers
--rwxrwxr-x. 1 vagrant vagrant    258 Feb 18 19:23 array.sh
--rwxrwxr-x. 1 vagrant vagrant    228 Feb 18 19:23 awk.sh
--rwxrwxr-x. 1 vagrant vagrant    152 Feb 18 19:23 func.sh
--rwxrwxr-x. 1 vagrant vagrant    379 Feb 18 19:23 if_case.sh
--rwxrwxr-x. 1 vagrant vagrant    299 Feb 18 19:23 loop.sh
--rwxrwxr-x. 1 vagrant vagrant     98 Feb 18 19:23 loop1.sh
--rwxrwxr-x. 1 vagrant vagrant    168 Feb 18 19:23 loop2.sh
--rwxrwxr-x. 1 vagrant vagrant    111 Feb 18 19:23 loop3.sh
--rwxrwxr-x. 1 vagrant vagrant     80 Feb 18 19:23 loop4.sh
--rwxrwxr-x. 1 vagrant vagrant    159 Feb 18 19:23 loop5.sh
--rwxrwxr-x. 1 vagrant vagrant    153 Feb 18 19:23 loop6.sh
--rwxrwxr-x. 1 vagrant vagrant    397 Feb 18 19:23 par.sh
--rwxrwxr-x. 1 vagrant vagrant    149 Feb 18 19:23 read.sh
--rwxrwxr-x. 1 vagrant vagrant      0 Feb 18 19:23 regexp_glob.sh
--rw-rw-r--. 1 vagrant vagrant   1974 Feb 18 19:23 script.exp
--rwxrwxr-x. 1 vagrant vagrant     38 Feb 18 19:23 sed.sh
--rw-rw-r--. 1 vagrant vagrant     88 Feb 18 19:23 test.awk
--rw-rw-r--. 1 vagrant vagrant    395 Feb 18 19:23 trap.sh
--rwxrwxr-x. 1 vagrant vagrant    253 Feb 18 19:23 var_env.sh
+## Подготовка стенда
+
+Для выполнения задания подготовим стенд и настроим `SharedFolders` в Vagrant.  
+По умолчанию используемый образ Centos/7  использует синхронизацию rsync при старте ВМ.  
+В данной работе нам необходимо обмениваться файлами с хостовой машиной. Реализация обмена файлами в Vagrant может осуществляться несколькими путями.
+
+- настройкой `sshfs`
+- настройкой `NFS`
+- настройкой `SharedFolders`
+
+Остановимся на последнем варианте. Данный вариант универсаелен для разных образов ВМ. Имеет как приемущества и недостатки.  
+Основной недостаток - долгий старт ВМ при ее создании. Т.к.  при старте собирается модуль ядра с поддержкой ...  
+
+<details>
+<summary> Установим плагин vagrant-vbguest </summary>
+
+```bash
+ dkasyan@MyX240  ~/OTUS2020-10/07. Bash/stands-05-bash   main  vagrant plugin install vagrant-vbguest
+ Installing the 'vagrant-vbguest' plugin. This can take a few minutes...
+ Fetching micromachine-3.0.0.gem
+ Fetching vagrant-vbguest-0.28.0.gem
+ Installed the plugin 'vagrant-vbguest (0.28.0)'!
+
+ dkasyan@MyX240  ~/OTUS2020-10/07. Bash/stands-05-bash   main  vagrant plugin list
+ vagrant-scp (0.5.7, global)
+ vagrant-vbguest (0.28.0, global)
 ```
 
-Просчитаем количество уникальных IP адресов
-`[vagrant@bash share]$ awk '{ print $1}' access-4560-644067.log | uniq | wc -l`
+</details>  
+
+Внесем изменения в `Vagrantfile`  
+Добавим разрешение на обновление ядра для Centos из документации к `vagrant-vbguest` : https://github.com/dotless-de/vagrant-vbguest  
+Синхронизируем текущую директорию с директорией `/vagrant` на ВМ  
+
+```bash
+35 ###
+36           box.vbguest.installer_options = { allow_kernel_upgrade: true }
+37 ###
+38           config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
 ```
-[vagrant@bash share]$ awk '{ print $1}' access-4560-644067.log | uniq | wc -l
+
+Запустим ВМ. В конфигурации прописаны три ВМ с именами:
+
+- bash
+- mysql
+- nginx
+
+Создание ВМ происходило продолжительное время, по причине сборки и включения модуля ядра ...  
+В результате все три ВМ имеют поддержку плагина:
+
+```bash
+ dkasyan@MyX240  ~/OTUS2020-10/07. Bash/stands-05-bash   main  vagrant vbguest --status
+ [bash] GuestAdditions 6.1.16 running --- OK.
+ [mysql] GuestAdditions 6.1.16 running --- OK.
+ [nginx] GuestAdditions 6.1.16 running --- OK.
+```
+
+Подключимся к ВМ `bash`, проверим наличие директории `/vagrant`, создадим файл и проверим наличие файла на хостовой машине.
+
+![screen](pictures/pic1.png)
+
+Файл соданный на ВМ синхронизировался с хостовой машиной.  
+Настройка `SharedFolders` закончена.
+Т.к. все ВМ идентичны, закомментируем ВМ `mysql, nginx` и продолжим работу с `bash`.
+
+## jlkJ;l
+
+grant@bash vagrant]$ awk -F ":" '{ print $2, NR }' access-4560-644067.log | head -n 3
+04 1
+04 2
+04 3
+
+Просчитаем количество уникальных IP адресов
+
+```bash
+[vagrant@bash vagrant]$ awk '{ print $1}' access-4560-644067.log | uniq | wc
+-l
 312
 ```
-Выберем список IP адресов с HTTP GET заросами к сайту:  
-`[vagrant@bash share]$ awk '{ if (/GET/) print $1, $7}' access-4560-644067.log`
-```
-[vagrant@bash share]$ awk '{ if (/GET/) print $1, $7}' access-4560-644067.log
-200.33.155.30 /
-165.22.19.102 /wp-login.php
-191.115.71.210 /
+
+Выберем список IP адресов с HTTP GET запросами к сайту: 
+
+<details>
+<summary> awk '{ if (/GET/) print $1, $7}' access-4560-644067.log </summary>
+
+```bash
+...
+93.158.167.130 /
+188.166.2.191 /wp-login.php
+185.142.236.35 /
+185.142.236.35 /
+185.142.236.35 /robots.txt
+185.142.236.35 /sitemap.xml
+185.142.236.35 /.well-known/security.txt
+185.142.236.35 /favicon.ico
 93.158.167.130 /
 87.250.233.68 /
-181.214.191.196 /
-191.96.41.52 /
-87.250.233.75 /
-93.158.167.130 /
-87.250.233.120 /
-93.158.167.130 /robots.txt
-95.108.181.93 /tag/overcommit_ratio/
-95.108.181.93 /wp-includes/js/wp-embed.min.js?ver=5.0.4
+87.250.233.68 /
+87.250.233.68 /
+93.158.167.130 /tag/oracle-12c/
+...
 ```
 В выборке присутствуют "пустые" GET запросы.  
 Пробуем исключить "пустые" GET запросы регулярным выражением:  
 `[vagrant@bash share]$ awk '{if (/GET/~!/\/\ /) print $1, $7}' access-4560-644067.log`
-```
+```bash
 [vagrant@bash share]$ awk '{if (/GET/~!/\/\ /) print $1, $7}' access-4560-644067.log
 awk: cmd. line:1: warning: regular expression on left of `~' or `!~' operator
 165.22.19.102 /wp-login.php
@@ -78,7 +122,7 @@ awk: cmd. line:1: warning: regular expression on left of `~' or `!~' operator
 162.243.13.195 /1
 ```
 `[vagrant@bash share]$ awk '{if (/GET/&&($7 ~!/\/\ /)) print $1, $7}' access-4560-644067.log`
-```
+```bash
 [vagrant@bash share]$ awk '{if (/GET/&&($7 ~!/\/\ /)) print $1, $7}' access-4560-644067.log
 207.46.13.113 /sitemap-pt-post-2017-06.xml
 46.229.168.130 /%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%B9-%D0%B4%D0%BB%D1%8F-%D0%B2%D1%8B%D1%81/
@@ -99,7 +143,7 @@ awk: cmd. line:1: warning: regular expression on left of `~' or `!~' operator
 ```
 Выведем HTTP коды ответов:  
 `[vagrant@bash share]$ awk '/GET/ { print $1, $9}' access-4560-644067.log`
-```
+```bash
 [vagrant@bash share]$ awk '/GET/ { print $1, $9}' access-4560-644067.log
 200.33.155.30 200
 165.22.19.102 200
@@ -114,7 +158,7 @@ awk: cmd. line:1: warning: regular expression on left of `~' or `!~' operator
 
 Определим количество полей во всех записях лога:  
 `[vagrant@bash share]$ awk '{print NF}' access-4560-644067.log| sort| uniq`
-```
+```bash
 [vagrant@bash share]$ awk '{print NF}' access-4560-644067.log| sort| uniq
 13
 15
@@ -133,10 +177,12 @@ awk: cmd. line:1: warning: regular expression on left of `~' or `!~' operator
 29
 31
 34
+
+
 ```
 `awk '/GET \/ HTTP/{ ipcount[$1]++ } END { for (i in ipcount) { printf "IP:%15s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20`
 
-```
+```bash
 [vagrant@bash stands-05-bash]$ awk '/GET \/ HTTP/{ ipcount[$1]++ } END { for (i in ipcount) { printf "IP:%15s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20
 IP: 93.158.167.130 - 31 times
 IP:  87.250.233.68 - 29 times
@@ -158,9 +204,11 @@ IP:    5.45.203.15 - 2 times
 IP:     5.45.74.36 - 2 times
 IP:      185.6.8.9 - 2 times
 IP: 88.229.210.251 - 1 times
+
 ```
 `awk '/GET \/ HTTP/{ ipcount[`**$9**`]++ } END { for (i in ipcount) { printf "IP:%15s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20`
-```
+
+```bash
 [vagrant@bash stands-05-bash]$ awk '/GET \/ HTTP/{ ipcount[$9]++ } END { for (i in ipcount) { printf "IP:%15s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20
 IP:            200 - 72 times
 IP:            301 - 48 times
@@ -170,7 +218,7 @@ IP:            304 - 1 times
 ```
 `awk '/GET /{ ipcount[$7]++ } END { for (i in ipcount) { printf "IP:%40s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20
 `
-```
+```bash
 [vagrant@bash stands-05-bash]$ awk '/GET /{ ipcount[$7]++ } END { for (i in ipcount) { printf "IP:%40s - %d times\n", i, ipcount[i] } }' access-4560-644067.log | sort -rnk4 | head -20
 IP:                                       / - 152 times
 IP:                           /wp-login.php - 59 times
@@ -195,4 +243,3 @@ IP:                       /admin/config.php - 2 times
 ```
 Формат вывода текущее времени:
  date +"["%d"/"%b"/"%G":"%H":"%M
-
