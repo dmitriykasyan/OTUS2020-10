@@ -2,7 +2,7 @@
 # vim: set ft=ruby :
 
 MACHINES = {
-  :lab12 => {
+  :DockerLab => {
         :box_name => "centos/7",
         :ip_addr => '192.168.11.101'
   }
@@ -22,24 +22,19 @@ Vagrant.configure("2") do |config|
           box.vm.network "private_network", ip: boxconfig[:ip_addr]
 
           box.vm.provider :virtualbox do |vb|
-            vb.customize ["modifyvm", :id, "--memory", "256"]
+            vb.customize ["modifyvm", :id, "--memory", "512"]
           end
-
-          config.vm.synced_folder ".", "/vagrant"
-
+###
+          box.vbguest.installer_options = { allow_kernel_upgrade: true }
+###
+          config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+          
           box.vm.provision "shell", inline: <<-SHELL
-           mkdir -p ~root/.ssh
-           cp ~vagrant/.ssh/auth* ~root/.ssh
-           yum install epel-release -y -q
-# Install docker-ce
-           sudo yum install -y -q yum-utils \
-           device-mapper-persistent-data
-           sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-           yum install docker-ce docker-compose -y -q
-           systemctl start docker
-           docker run hello-world
-      SHELL
+            mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+            yum install vim epel-release bash-completion-extras -y
+          SHELL
 
       end
   end
 end
+

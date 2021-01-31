@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
 
           box.vbguest.installer_options = { allow_kernel_upgrade: true }
 
-#          box.vm.provision "shell", inline: <<-SHELL
+          box.vm.provision "shell", inline: <<-SHELL
            mkdir -p ~root/.ssh
            cp ~vagrant/.ssh/auth* ~root/.ssh
 	         yum install epel-release bash-completion-extras -y #-q
