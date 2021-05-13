@@ -1,0 +1,28 @@
+nginx.conf
+
+        location / {
+# Add lines to start php-fpm
+                            index index.php index.html index.htm;
+        }
+
+# Add location to start php-fpm
+        location ~ \.php$ {
+          set $root_path /usr/share/nginx/html;
+          fastcgi_pass unix:/run/php-fpm/www.sock;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $root_path$fastcgi_script_name;
+          include fastcgi_params;
+          fastcgi_param DOCUMENT_ROOT $root_path;
+        }
+----
+/etc/php-fpm.d/www.conf
+
+; listen = 127.0.0.1:9000
+
+; Add line
+listen = /run/php-fpm/www.sock
+
+
+/usr/share/nginx/html/index.php
+
+<?php phpinfo(); ?>

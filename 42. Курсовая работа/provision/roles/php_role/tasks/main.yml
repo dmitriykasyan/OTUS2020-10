@@ -1,0 +1,27 @@
+---
+# Variable setup.
+- name: Load PHP variables for OS-family.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Include base PHP packages and define php_modules.
+  set_fact:
+    php_modules: "{{ __php_modules | list }}"
+  when: php_modules is not defined
+
+- name: Include project specific PHP packages php_modules_additional.
+  set_fact:
+    php_modules: "{{ php_modules | list + php_modules_additional | list }}"
+  when: php_modules_additional is defined
+
+- name: Define extra php_modules.
+  set_fact:
+    php_modules: "{{ php_modules | list + php_modules_devel | list }}"
+  when: php_modules_devel is defined
+
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when:
+    - ansible_os_family == 'RedHat'
+
+# Configure PHP.
+- include_tasks: configure.yml

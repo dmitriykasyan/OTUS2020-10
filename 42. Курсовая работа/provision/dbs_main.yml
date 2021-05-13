@@ -1,0 +1,97 @@
+---
+# tasks for DBServer
+- name: Configure DBServer
+  hosts: DBServer
+  become: true
+
+  vars:
+    # - mysql_root_password: 105aa5cf868ed5cd5a3d79fe0ad7c08a190b4e5db8f75eb78c7eb3b936847014
+    - mysql_root_password: Otus_2020
+
+  tasks:
+  - name: Ping
+    ansible.builtin.ping:
+
+  - name: Install epel & common progs
+    yum:
+      name:
+        - epel-release
+      state: present
+      update_cache: true
+  
+  - name: Install packeges
+    yum:
+      name:
+        - vim
+        - bash-completion
+        - bash-completion-extras
+      state: present
+
+  - name: Install repo mysql-community-server80
+    yum:
+      name: https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+      state: present
+
+  - name: Install the mysql-community-server80
+    yum:
+      name: mysql-server
+      state: present
+
+  - name: Install the python3 & modules
+    yum:
+      name:
+        - python-pip
+        - python-virtualenv
+        - python-setuptools
+        - python3 
+        - python3-pip
+        - python3-devel
+        - mysql-devel
+        - gcc
+        - python3-PyMySQL
+        # - mysql-python
+      state: present
+    tags: inst_py_mod
+
+  - name: pip upgrade
+    shell:
+      cmd: curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o /opt/get-pip.py && python /opt/get-pip.py
+      # cmd: python /opt/get-pip.py
+    become: true
+
+  - name: Create .my.cnf
+    template:
+     src: "client.my.cnf.j2"
+     dest: "/root/.my.cnf"
+     owner: root
+     group: root
+     mode: 0600
+
+  - name: Mysql a service is running
+    systemd:
+      name: mysqld    
+      state: started
+
+  - name: Install mysqlclient python package
+    pip:
+      name: 
+        - mysqlclient
+        - mysql-connector-python
+        - PyMySQL
+        - cryptography
+
+  - name: Add set pwd mysql
+    copy:
+      src: "./mysql_set_pwd.sh"
+      dest: "/opt/mysql_set_pwd.sh"
+      owner: root
+      group: root
+      mode: "0744"
+    
+    tags: copy_file
+    # become: true
+  
+  - name: Change default DB password
+    shell: "/opt/mysql_set_pwd.sh"
+    tags: db_connect
+  

@@ -1,0 +1,24 @@
+---
+- name: NGINXSrv
+  hosts: NGINXSrv
+  become: true
+
+  tasks:
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+      
+      tags:
+      - packages
+
+    - name: Starting services
+      systemd:
+        name: nginx
+        state: started
+  
+      notify:
+        - restart nginx
+    
+
+...

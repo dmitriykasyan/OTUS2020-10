@@ -1,0 +1,74 @@
+---
+
+- name: NGINXSrv
+  hosts: NGINXSrv
+  become: true
+
+  tasks:
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+      
+      tags:
+      - packages
+
+    - name: Starting services
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+        name: firewalld
+        enabled: no`
+        state: stopped
+
+    - name: Allow rsync to listen on tcp port 514
+      seport:
+        ports: 514
+        proto: tcp
+        setype: rsync_port_t
+        state: present
+  
+#    - name: permit traffic in default zone on port 514/tcp
+#      firewalld:
+#        port: 514/tcp
+#        permanent: yes
+#        state: enabled
+#
+#    - name: permit traffic in default zone for http service
+#      firewalld:
+#        service: http
+#        permanent: yes
+#        state: enabled
+
+      # notify:
+      #   - restart nginx
+
+- name: LOGSrv
+  hosts: LOGSrv
+  become: true
+
+  tasks:
+    - ping:
+
+    - name: Starting services
+      systemd:
+        name: firewalld
+        enabled: yes
+        state: started
+    
+    - name: Allow rsync to listen on tcp port 514
+      seport:
+        ports: 514
+        proto: tcp
+        setype: rsync_port_t
+        state: present
+
+    - name: permit traffic in default zone on port 514/tcp
+      firewalld:
+        port: 514/tcp
+        permanent: yes
+        state: enabled
+
+...

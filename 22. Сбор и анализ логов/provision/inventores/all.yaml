@@ -1,0 +1,16 @@
+all:
+  stand:
+
+  vars:
+    ansible_user: 'vagrant'
+    ansible_host: 127.0.0.1
+
+stand:
+  hosts:
+    LOGSrv:
+      ansible_port: 2222
+      ansible_private_key_file: /mnt/dkasyan/OTUS2020-10/22. Сбор и анализ логов/.vagrant/machines/LOGSrv/virtualbox/private_key
+    
+    NGINXSrv:
+      ansible_port: 2200
+      ansible_private_key_file: /mnt/dkasyan/OTUS2020-10/22. Сбор и анализ логов/.vagrant/machines/NGINXSrv/virtualbox/private_key

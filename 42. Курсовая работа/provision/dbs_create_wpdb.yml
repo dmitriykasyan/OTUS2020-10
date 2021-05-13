@@ -1,0 +1,33 @@
+---
+- name: Add WP database DBServer
+  hosts: DBServer
+  # become: true
+
+  tasks:
+  
+  - name: Ping
+    ansible.builtin.ping:
+
+  - name: Create a new database with name wordpress
+    community.mysql.mysql_db:
+      login_user: root
+      login_password: Otus_2020
+      name: wordpress
+      state: present
+    tags: db_create
+
+  - name: Create database user 'adminuser' and password 'Otus123' with wordpress database privileges
+    community.mysql.mysql_user:
+      login_user: root
+      login_password: Otus_2020
+      name: adminuser
+      password: Otus_123
+      host: '192.168.10.10'
+      priv: 'WORDPRESS.*:ALL,GRANT'
+      state: present
+    tags: add_DB_user
+
+  - name: Reload privilege tables
+    shell: 'mysql --user=root --password=Otus_2020 -ne "FLUSH PRIVILEGES"'
+        #  changed_when: False 
+    tags: flush

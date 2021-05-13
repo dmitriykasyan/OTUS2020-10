@@ -1,0 +1,61 @@
+---
+- name: Install PHP 8.0.5
+  hosts: AppServer
+  become: true
+
+  tasks:
+  
+  - name: Ping
+    ping:
+    tags: ping
+
+  - name: Install repo remi-release-7
+    yum:
+      name:  
+        - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        - https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      state: installed
+    tags: add_repo
+
+  - name: Install packeges
+    yum:
+      name:
+        - vim
+        - bash-completion
+        - bash-completion-extras
+        - yum-utils
+      state: present
+
+  - name: Change repositoty
+    shell: yum-config-manager --disable remi*
+    shell: yum-config-manager --enable remi-php80   
+    tags: enable_repo 
+
+  - name: Install PHP 8.0
+    yum:
+      name:
+        - php 
+        - php-cli
+        - php-fpm
+        - php-mysqlnd
+        - php-zip
+        - php-devel
+        - php-gd
+        - php-mbstring
+        - php-curl
+        - php-xml
+        - php-pear
+        - php-bcmath
+        - php-json
+      state: present
+      
+  - name: Start PHP-FPM
+    systemd:
+      name: php-fpm
+      enabled: yes
+      state: started
+    tags: start_php
+
+# SELinux
+# setsebool -P httpd_can_network_connect 1
+# setsebool -P httpd_can_network_connect_db 1

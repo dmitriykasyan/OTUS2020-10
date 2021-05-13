@@ -1,0 +1,25 @@
+---
+- name: Install WP
+  hosts: AppServer
+  become: true
+
+  tasks:
+
+  - name: Download WP
+    get_url:
+      url: https://wordpress.org/wordpress-5.7.1.tar.gz
+      dest: /opt
+      mode: '0640'
+    tags: dnl_wp
+    
+  - name: Unpack WP
+    unarchive:
+      remote_src: true
+      src: /opt/wordpress-5.7.1.tar.gz
+      dest: /opt/
+    tags: unp_wp
+
+  - name: Synchronization of src on the control machine to dest on the remote hosts
+    shell: 
+      cmd: cp -R /opt/wordpress/* /usr/share/nginx/html/
+    tags: sync_wp_folder

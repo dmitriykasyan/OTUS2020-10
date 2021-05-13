@@ -1,0 +1,89 @@
+---
+# Run all tests
+# default:
+#   image:
+#     name: $AWS_ECR_REPO/docker-ansible-ci:ansible-2.9
+
+stages:
+  - lint
+  - deployment test
+
+before_script:
+  - rm -rf molecule/resources/provisioning
+  - ansible --version
+  - ansible-lint --version
+  - molecule --version
+  - git clone https://github.com/lean-delivery/ansible-molecule-drivers.git molecule/resources/provisioning
+
+variables:
+  GET_SOURCES_ATTEMPTS: "5"
+
+Lint:
+  stage: lint
+  before_script:
+    - git clone https://github.com/lean-delivery/ansible-lint-rules.git ~/ansible-lint-rules
+  script:
+    - yamllint . -c .yamllint
+    - ansible-lint . -c .ansible-lint
+  after_script:
+    - rm -rf ~/ansible-lint-rules
+  tags:
+    - lint
+
+.Docker mysql:
+  stage: deployment test
+  script:
+    - molecule test -s default
+  tags:
+    - aws
+
+AWS mysql 5.7 ansible-2.10:
+  image:
+    name: $AWS_ECR_REPO/docker-ansible-ci:ansible-2.10
+  variables:
+    AWS_REGION: us-east-1
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-direct-5.7
+  tags:
+    - aws
+
+AWS mysql 5.6:
+  variables:
+    AWS_REGION: us-east-1
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-direct-5.6
+  tags:
+    - aws
+
+AWS mysql 5.5:
+  variables:
+    AWS_REGION: us-east-1
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-direct-5.5
+  tags:
+    - aws
+
+AWS mysql-8.0 ansible-2.10:
+  image:
+    name: $AWS_ECR_REPO/docker-ansible-ci:ansible-2.10
+  variables:
+    AWS_REGION: us-east-1
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-direct-8.0
+  tags:
+    - aws
+
+AWS mariadb ansible 2.10:
+  image:
+    name: $AWS_ECR_REPO/docker-ansible-ci:ansible-2.10
+  variables:
+    AWS_REGION: us-east-1
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-direct-mariadb
+  tags:
+    - aws

@@ -1,0 +1,15 @@
+
+hosts:
+  children:
+    prod:
+      hosts:
+
+        AppServer:
+          ansible_port: 2222
+          ansible_host: 127.0.0.1
+          ansible_private_key_file: ../.vagrant/machines/AppServer/virtualbox/private_key
+
+        DBServer:
+          ansible_host: 127.0.0.1
+          ansible_port: 2200
+          ansible_private_key_file: ../.vagrant/machines/DBServer/virtualbox/private_key

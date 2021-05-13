@@ -1,0 +1,47 @@
+---
+- name: Add repository and install packages
+  block:
+
+    - name: Set {{ mysql_daemon }} {{ mysql_version }} repository file
+      template:
+        src: yum.repo.j2
+        dest: '{{ mysql_repofile }}'
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Add gpgkey
+      rpm_key:
+        state: present
+        key: '{{ mysql_gpgkey }}'
+        fingerprint: '{{ mysql_fingerprint | default(omit) }}'
+      register: task_result
+      retries: 5
+      delay: 2
+      until: task_result is succeeded
+
+    - name: Install requirements
+      yum:
+        name: '{{ mysql_python_packages }}'
+        state: present
+        update_cache: true
+      register: task_result
+      until: task_result is succeeded
+
+    - name: Disable mysql dnf module if required
+      ini_file:
+        path: '/etc/dnf/modules.d/{{ module_item }}.module'
+        section: '{{ module_item }}'
+        option: state
+        value: disabled
+        no_extra_spaces: true
+        mode: 0644
+      loop:
+        - mysql
+        - mariadb
+      loop_control:
+        loop_var: module_item
+      when:
+        - ansible_distribution_major_version | int > 7
+
+  become: true

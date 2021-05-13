@@ -1,0 +1,6 @@
+---
+  - name: PHP | Install and configure
+    hosts: AppServer
+    become: true
+    roles:
+      - role: php_role

@@ -1,0 +1,5 @@
+---
+# The following default values for variables in templates/php.ini.j2
+# When not overridden in YAML files in either host_vars or group_vars
+upload_max_filesize: 128M
+post_max_size: 8M

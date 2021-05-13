@@ -1,0 +1,24 @@
+---
+- name: Define PHP repos to use.
+  set_fact:
+    php_repo: "{{ __php_repo }}"
+  when: php_repo is not defined
+
+# Version number formatting for use in repository/package naming.
+- name: Get PHP version format - remove periods in version numbers.
+  set_fact:
+    version_num: "{{ php_version | replace('.', '') }}"
+  when: php_version is defined
+
+- name: Get PHP version format - reduce to 2 characters.
+  set_fact:
+    version_num: "{{ version_num[0:2] }}"
+  when: php_version is defined
+
+- name: Use PHP version default if php_version is not defined
+  set_fact:
+    version_num: "72"
+  when: php_version is not defined
+
+- name: Include tasks to configure php repository
+  include_tasks: "configure-RedHat-{{ php_repo }}.yml"

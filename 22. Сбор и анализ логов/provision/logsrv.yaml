@@ -1,0 +1,9 @@
+---
+- name: LOGSrv
+  hosts: LOGSrv
+  become: true
+
+  tasks:
+    ping:
+
+...

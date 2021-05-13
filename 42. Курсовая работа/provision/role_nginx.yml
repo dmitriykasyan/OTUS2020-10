@@ -1,0 +1,6 @@
+---
+  - name: NGINX | Install and configure
+    hosts: AppServer
+    become: true
+    roles:
+      - role: nginx_role

@@ -1,0 +1,18 @@
+---
+  - name: MySQL | Install and configure
+    hosts: DBServer
+    become: true
+    roles:
+      - role: mysql_role
+    vars:
+      mysql_user_name: root
+      mysql_user_password: Otus_2020
+      mysql_databases:
+        -name: wordpress
+      mysql_port: 3306
+      mysql_bind_address: '0.0.0.0'
+      mysql_daemon: mysqld
+      mysql_version: 8.0
+      mysql_packages:
+        - mysql-community-server
+        - mysql-community-client
