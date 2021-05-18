@@ -1,6 +1,6 @@
 ---
   - name: NGINX | Install and configure
-    hosts: AppServer
+    hosts: AppSrv
     become: true
     roles:
       - role: nginx_role

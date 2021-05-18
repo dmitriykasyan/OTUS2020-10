@@ -1,6 +1,8 @@
 ---
 - name: Add WP database DBServer
-  hosts: DBServer
+  hosts: 
+    - DBServer
+    - AppSrv # temporary
   # become: true
 
   tasks:
@@ -22,8 +24,8 @@
       login_password: Otus_2020
       name: adminuser
       password: Otus_123
-      host: '192.168.10.10'
-      priv: 'WORDPRESS.*:ALL,GRANT'
+      # host: '192.168.10.10'
+      priv: 'wordpress.*:ALL,GRANT'
       state: present
     tags: add_DB_user
 

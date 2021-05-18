@@ -1,7 +1,10 @@
 ---
 # tasks for DBServer
 - name: Configure DBServer
-  hosts: DBServer
+  hosts: 
+    - DBServer
+    # temporary 
+    - AppSrv
   become: true
 
   vars:

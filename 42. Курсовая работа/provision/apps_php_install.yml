@@ -1,6 +1,6 @@
 ---
 - name: Install PHP 8.0.5
-  hosts: AppServer
+  hosts: AppSrv
   become: true
 
   tasks:

@@ -1,3 +1,0 @@
----
-- name: restart mysql
-  include_tasks: mysql_restart.yml
