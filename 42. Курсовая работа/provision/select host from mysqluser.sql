@@ -1,0 +1,1 @@
+ select host from mysql.user where User='adminuser';
