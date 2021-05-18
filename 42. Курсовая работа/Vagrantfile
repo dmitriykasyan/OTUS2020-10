@@ -2,7 +2,7 @@
 # vim: set ft=ruby :
 
 MACHINES = {
-  :AppServer => {
+  :AppSrv => {
         :box_name => "centos/7",
         :ip_addr => '192.168.10.10'
   },
@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
           SHELL
           
           case boxname.to_s
-          when "AppServer"
+          when "AppSrv"
             box.vm.provision "ansible" do |ansible|
               ansible.verbose = "vv"
               ansible.become = "true"
